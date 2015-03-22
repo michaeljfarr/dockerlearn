@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herolab.WebAPI.Conventions"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Herolab.WebAPI", "Herolab.WebAPI\Herolab.WebAPI.kproj", "{FA7D10A7-E976-43A7-AE2E-17B3ACD3DF68}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Herolab.NowinHost", "Herolab.NowinHost\Herolab.NowinHost.kproj", "{66C4928F-A835-4EE2-B477-F15905445874}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{FA7D10A7-E976-43A7-AE2E-17B3ACD3DF68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA7D10A7-E976-43A7-AE2E-17B3ACD3DF68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA7D10A7-E976-43A7-AE2E-17B3ACD3DF68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66C4928F-A835-4EE2-B477-F15905445874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66C4928F-A835-4EE2-B477-F15905445874}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66C4928F-A835-4EE2-B477-F15905445874}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66C4928F-A835-4EE2-B477-F15905445874}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
