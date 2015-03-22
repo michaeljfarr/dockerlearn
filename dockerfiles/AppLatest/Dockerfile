@@ -1,12 +1,13 @@
-FROM aspnet/mike
-# copy the contents of the local directory to /app/ on the image
-ADD . /app/
+FROM webapi/herolab
+# copy the solution folder (which is mapped using virtualbox folder share) to /app/ on the image
+ADD Herolab /app/
+
 # set the working directory for subsequent commands
 WORKDIR /app
 # fetch the NuGet dependencies for our application
 RUN kpm restore
 # set the working directory for subsequent commands
-WORKDIR /app/src/helloworldweb
+WORKDIR /app/Herolab.WebAPI
 # expose TCP port 5000 from container
 EXPOSE 5000
 # Configure the image as an executable

@@ -1,0 +1,39 @@
+#build our image
+cd /home/docker/host/dockerfiles/Mono
+sudo docker build -t="aspnet/herolab" .
+#check that there were no errors, failures at this point will mean the image doesn't get built properly
+
+#check that the image built 
+docker images
+#check that the image has the repository name aspnet/herolab
+
+cd /home/docker/host/dockerfiles/WebAPI
+rm -rf Herolab
+cp -r /home/docker/host/Herolab Herolab
+sudo docker build -t="webapi/herolab" .
+
+cd /home/docker/host/dockerfiles/Application
+rm -rf Herolab
+cp -r /home/docker/host/Herolab Herolab
+sudo docker build -t="webapp/herolab" .
+
+#tidy up orphaned images/containers
+#remove images without a tag (because they failed for some reason)
+#docker rmi -f $(docker images | grep "^<none>" | awk '{print $3}')
+#docker stop <first 3 characters or more of container name>
+#Remove all stopped containers.
+#docker rm $(docker ps -a -q)
+
+# to run bash in an image do
+#sudo docker run -t -i <first 3 characters or more of image id> /bin/bash
+#then ctrl-c to exit (or ctrl-p ctrl-q)
+
+
+docker run -d -t -p 8080:5000 webapp/herolab
+curl http://localhost:8080
+#docker logs -t 0216
+
+#see https://msopentech.com/blog/2014/11/07/creating-asp-net-vnext-docker-container-using-mono-2/ for the source of this
+#see https://registry.hub.docker.com/u/microsoft/aspnet/ for the code ref
+#see https://woss.name/articles/vagrant-docker-and-vmware-fusion/ for the vagrant demo
+#check circleci

@@ -2,7 +2,7 @@
 # verson 3.10 of Mono.
 # This will be automatically retrieved from the Docker Hub.
 # Docker Hub is Dockers community repository of pre-built containers
-FROM mono:3.10
+FROM mono:3.12
 # Ensure everything is up to date on the machine and install unzip
 RUN apt-get -qq update && apt-get -qqy install unzip
 # Install ASP.NET vNext and latest K Runtime Environment (KRE)
@@ -11,6 +11,6 @@ RUN bash -c "source /root/.k/kvm/kvm.sh \
       && kvm upgrade "
 # "ENV" sets an environment variable which will be set
 # whenever the container is started
-ENV PATH $PATH:/root/.kre/packages/default/bin
+ENV PATH $PATH:/root/.k/runtimes/kre-mono.1.0.0-beta3/bin/
 
 
