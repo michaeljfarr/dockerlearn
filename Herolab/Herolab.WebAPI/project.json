@@ -15,7 +15,7 @@
         "aspnet50": { }
     },
     "commands": {
-        "web": "Microsoft.AspNet.Hosting --server Nowin.vNext",
+        "web": "Microsoft.AspNet.Hosting --server Herolab.NowinHost",
         "web-kestrel": "Microsoft.AspNet.Hosting --server Kestrel"
     },
     "exclude": [
