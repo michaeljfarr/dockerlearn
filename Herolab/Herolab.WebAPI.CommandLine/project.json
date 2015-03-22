@@ -1,0 +1,13 @@
+{
+    "version": "1.0.0-*",
+    "dependencies": {
+        "Herolab.WebAPI.Config": "1.0.0-*",
+        "Microsoft.Framework.Runtime.Roslyn": "1.0.0.0-beta3"
+    },
+    "commands": {
+        "Herolab.WebAPI.CommandLine": "run"
+    },
+    "frameworks": {
+        "aspnet50": { }
+    }
+}
