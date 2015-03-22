@@ -8,8 +8,7 @@
         "Microsoft.AspNet.Security.OAuthBearer": "1.0.0.0-beta3",
         "Castle.Windsor": "3.3.0",
         "NUnit": "2.6.4.0",
-"Autofac": "4.0.0.0-alpha1",
-"Autofac": "4.0.0.0-alpha1"
+        "Autofac": "4.0.0.0-alpha1"
     },
 
     "frameworks": {
@@ -17,5 +16,9 @@
             "dependencies": {
             }
         }
+    },
+    "commands": {
+        "web": "Microsoft.AspNet.Hosting --server Nowin.vNext",
+        "web-kestrel": "Microsoft.AspNet.Hosting --server Kestrel"
     }
 }
