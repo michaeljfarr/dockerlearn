@@ -16,9 +16,5 @@
             "dependencies": {
             }
         }
-    },
-    "commands": {
-        "web": "Microsoft.AspNet.Hosting --server Nowin.vNext",
-        "web-kestrel": "Microsoft.AspNet.Hosting --server Kestrel"
     }
 }
