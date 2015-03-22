@@ -4,11 +4,5 @@
         "Nowin": "0.15.1",
         "Microsoft.AspNet.Hosting": "1.0.0-*",
         "Microsoft.AspNet.Owin": "1.0.0-*"
-    },
-    "commands": { 
-        "Herolab.NowinHost" : "run"
-    },
-    "frameworks" : {
-        "aspnet50" : { }
     }
 }

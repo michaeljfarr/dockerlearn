@@ -10,53 +10,47 @@ using Nowin;
 
 namespace Herolab.NowinHost
 {
-    public class Program
+    public class NowinServerFactory : IServerFactory
     {
-        public class NowinServerFactory : IServerFactory
+        private Func<object, Task> _callback;
+
+        private Task HandleRequest(IDictionary<string, object> env)
         {
-            private Func<object, Task> _callback;
+            return _callback(new OwinFeatureCollection(env));
+        }
 
-            private Task HandleRequest(IDictionary<string, object> env)
+        public IServerInformation Initialize(IConfiguration configuration)
+        {
+            // TODO: Parse config
+            var builder = ServerBuilder.New()
+                .SetAddress(IPAddress.Any)
+                .SetPort(5000)
+                .SetOwinApp(OwinWebSocketAcceptAdapter.AdaptWebSockets(HandleRequest));
+
+            return new NowinServerInformation(builder);
+        }
+
+        public IDisposable Start(IServerInformation serverInformation, Func<object, Task> application)
+        {
+            var information = (NowinServerInformation) serverInformation;
+            _callback = application;
+            INowinServer server = information.Builder.Build();
+            server.Start();
+            return server;
+        }
+
+        private class NowinServerInformation : IServerInformation
+        {
+            public NowinServerInformation(ServerBuilder builder)
             {
-                return _callback(new OwinFeatureCollection(env));
+                Builder = builder;
             }
 
-            public IServerInformation Initialize(IConfiguration configuration)
+            public ServerBuilder Builder { get; private set; }
+
+            public string Name
             {
-                // TODO: Parse config
-                var builder = ServerBuilder.New()
-                                           .SetAddress(IPAddress.Any)
-                                           .SetPort(5000)
-                                           .SetOwinApp(OwinWebSocketAcceptAdapter.AdaptWebSockets(HandleRequest));
-
-                return new NowinServerInformation(builder);
-            }
-
-            public IDisposable Start(IServerInformation serverInformation, Func<object, Task> application)
-            {
-                var information = (NowinServerInformation)serverInformation;
-                _callback = application;
-                INowinServer server = information.Builder.Build();
-                server.Start();
-                return server;
-            }
-
-            private class NowinServerInformation : IServerInformation
-            {
-                public NowinServerInformation(ServerBuilder builder)
-                {
-                    Builder = builder;
-                }
-
-                public ServerBuilder Builder { get; private set; }
-
-                public string Name
-                {
-                    get
-                    {
-                        return "Nowin";
-                    }
-                }
+                get { return "Nowin"; }
             }
         }
     }
