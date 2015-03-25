@@ -18,6 +18,7 @@ namespace Herolab.WebAPI.Config.Autofac
         {
             builder.RegisterType<AutofacServiceProvider>().As<IServiceProvider>();
             builder.RegisterType<AutofacServiceScopeFactory>().As<IServiceScopeFactory>();
+            builder.RegisterType<SystemStatus>().As<ISystemStatus>();
 
             Register(builder, descriptors);
         }

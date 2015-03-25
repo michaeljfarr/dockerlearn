@@ -1,26 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Herolab.WebAPI.Config;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Security.Infrastructure;
 
 namespace Herolab.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
+        private readonly ISystemStatus _systemStatus;
+
+        public ValuesController(ISystemStatus systemStatus)
+        {
+            _systemStatus = systemStatus;
+        }
+
         // GET: api/values
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "value1", _systemStatus.Magic };
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        [Authorize("sdf", Roles = "sadf")]
+        //[Route("api/values/{id}"), HttpGet]
+        //[Authorize("sdf", Roles = "sadf")]
         public string Get(int id)
         {
-            return "value";
+            return _systemStatus.Magic;
         }
 
         // POST api/values

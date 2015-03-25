@@ -53,14 +53,14 @@ namespace Herolab.WebAPI
 
                 a.AddPolicy("Master", b =>
                 {
-                    b.Combine(a.GetPolicy("MasterOrPin"));
+                    b.Combine(a.GetPolicy("MasterOrPinAuthCode"));
                     b.RequiresClaim("Master");
                 });
 
 
                 a.AddPolicy("PinAuthCode", b =>
                 {
-                    b.Combine(a.GetPolicy("MasterOrPin"));
+                    b.Combine(a.GetPolicy("MasterOrPinAuthCode"));
                     b.RequiresClaim("PinAuthCode");
                 });
 
