@@ -1,22 +1,29 @@
-#build our image
+
+cd /home/docker/
+mkdir host
+sudo mount -t vboxsf host host
+
+#build our image from mono and add the latest asp.net stuff into it
 cd /home/docker/host/dockerfiles/Mono
 sudo docker build -t="aspnet/herolab" .
+
+#run kpm restore in the newly created image and commit it, this saves us re-running kpm restore for every basic file.
+sudo docker run -t -v /home/docker/host/Herolab:/app -p 8080:5000 aspnet/herolab kpm restore
+sudo docker commit -m "Restored kpm" $(docker ps -l | sed -n 2p | awk '{print $1}') webapi/herolab
+
+#run this command if you just want to experiment inside the image
+#sudo docker run -t -i -v -p 8080:5000 /home/docker/host/Herolab:/app webapi/herolab /bin/bash
+
+#run the webserver in the image
+sudo docker run -d -t -i -p 8080:5000 -w /app/Herolab.WebAPI -v /home/docker/host/Herolab:/app webapi/herolab k web
+
+#test the image
+curl http://localhost:8080
+curl http://localhost:8080/api/values/1
+
 #check that there were no errors, failures at this point will mean the image doesn't get built properly
 
-#check that the image built 
-docker images
-#check that the image has the repository name aspnet/herolab
-
-cd /home/docker/host/dockerfiles/WebAPI
-rm -rf Herolab
-cp -r /home/docker/host/Herolab Herolab
-sudo docker build -t="webapi/herolab" .
-
-cd /home/docker/host/dockerfiles/Application
-rm -rf Herolab
-cp -r /home/docker/host/Herolab Herolab
-sudo docker build -t="webapp/herolab" .
-
+#docker logs -t 0216
 #tidy up orphaned images/containers
 #remove images without a tag (because they failed for some reason)
 #docker rmi -f $(docker images | grep "^<none>" | awk '{print $3}')
@@ -26,13 +33,8 @@ sudo docker build -t="webapp/herolab" .
 
 # to run bash in an image do
 #sudo docker run -t -i <first 3 characters or more of image id> /bin/bash
+#sudo docker run -t -i webapi/herolab /bin/bash
 #then ctrl-c to exit (or ctrl-p ctrl-q)
-
-
-docker run -d -t -p 8080:5000 webapp/herolab
-curl http://localhost:8080
-#docker logs -t 0216
-
 #see https://msopentech.com/blog/2014/11/07/creating-asp-net-vnext-docker-container-using-mono-2/ for the source of this
 #see https://registry.hub.docker.com/u/microsoft/aspnet/ for the code ref
 #see https://woss.name/articles/vagrant-docker-and-vmware-fusion/ for the vagrant demo
