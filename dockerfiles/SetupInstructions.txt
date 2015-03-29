@@ -1,7 +1,8 @@
 
 cd /home/docker/
-mkdir host
-sudo mount -t vboxsf host host
+ln -s Projects/dockerlearn/ host
+#mkdir host
+#sudo mount -t vboxsf  host host
 
 #build our image from mono and add the latest asp.net stuff into it
 cd /home/docker/host/dockerfiles/Mono
