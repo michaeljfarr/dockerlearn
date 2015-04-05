@@ -1,4 +1,4 @@
-﻿{
+{
     "version": "1.0.0-*",
     "dependencies": {
         "Microsoft.AspNet.Server.IIS": "1.0.0-beta3",
@@ -8,12 +8,19 @@
         "Microsoft.AspNet.Security.OAuthBearer": "1.0.0.0-beta3",
         "Castle.Windsor": "3.3.0",
         "NUnit": "2.6.4.0",
-        "Autofac": "4.0.0.0-alpha1"
+        "Autofac": "4.0.0.0-alpha1",
+        "AutoMapper": "3.0.0"
+
     },
 
     "frameworks": {
         "aspnet50": {
             "dependencies": {
+                "Herolab.Umbraco": "1.0.0-*"
+            },
+            "frameworkAssemblies": {
+                "System.Data": "4.0.0.0",
+                "System.Web": "4.0.0.0"
             }
         }
     }

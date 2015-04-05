@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Herolab.Umbraco;
 using Herolab.WebAPI.Config;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Security.Infrastructure;
@@ -11,17 +12,19 @@ namespace Herolab.WebAPI.Controllers
     public class ValuesController : Controller
     {
         private readonly ISystemStatus _systemStatus;
+        private readonly IContentServer _contentServer;
 
-        public ValuesController(ISystemStatus systemStatus)
+        public ValuesController(ISystemStatus systemStatus, IContentServer contentServer)
         {
             _systemStatus = systemStatus;
+            _contentServer = contentServer;
         }
 
         // GET: api/values
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", _systemStatus.Magic };
+            return new string[] { "value1", _systemStatus.Magic, _contentServer.GetObject() };
         }
 
         // GET api/values/5

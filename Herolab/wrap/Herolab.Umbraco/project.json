@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0-*",
+  "frameworks": {
+    "net45": {
+      "wrappedProject": "../../Herolab.Umbraco/Herolab.Umbraco.csproj",
+      "bin": {
+        "assembly": "../../Herolab.Umbraco/obj/{configuration}/Herolab.Umbraco.dll",
+        "pdb": "../../Herolab.Umbraco/obj/{configuration}/Herolab.Umbraco.pdb"
+      },
+      "dependencies": {
+        "AutoMapper": "1.0.0-*",
+        "AutoMapper.Net4": "1.0.0-*",
+        "HtmlAgilityPack": "1.0.0-*",
+        "ICSharpCode.SharpZipLib": "1.0.0-*",
+        "interfaces": "1.0.0-*",
+        "log4net": "1.0.0-*",
+        "MiniProfiler": "1.0.0-*",
+        "MySql.Data": "1.0.0-*",
+        "Newtonsoft.Json": "1.0.0-*",
+        "Umbraco.Core": "1.0.0-*"
+      }
+    }
+  }
+}

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Autofac;
 using Autofac.Builder;
+using Herolab.Umbraco;
 using Microsoft.Framework.DependencyInjection;
 
 namespace Herolab.WebAPI.Config.Autofac
@@ -18,7 +19,8 @@ namespace Herolab.WebAPI.Config.Autofac
         {
             builder.RegisterType<AutofacServiceProvider>().As<IServiceProvider>();
             builder.RegisterType<AutofacServiceScopeFactory>().As<IServiceScopeFactory>();
-            builder.RegisterType<SystemStatus>().As<ISystemStatus>();
+            builder.RegisterType<SystemStatus>().As<ISystemStatus>().SingleInstance();
+            builder.RegisterType<ContentServer>().As<IContentServer>().SingleInstance();
 
             Register(builder, descriptors);
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
@@ -11,6 +12,8 @@ using System.Security.Claims;
 using Castle.Windsor;
 using Herolab.WebAPI.Config.Autofac;
 using Autofac;
+using Herolab.Umbraco;
+using Umbraco.Core.Services;
 
 namespace Herolab.WebAPI
 {
@@ -83,6 +86,18 @@ namespace Herolab.WebAPI
             //return windsorContainer.Resolve<IServiceProvider>();
             containerBuilder.Populate(services);
             var container = containerBuilder.Build();
+            var workingDir = Environment.GetEnvironmentVariable("HerolabWorkingDirectory");
+            if (workingDir != null && Directory.Exists(workingDir))
+            {
+                var pluginDir = System.IO.Path.Combine(workingDir, "App_Data/TEMP/PluginCache");
+                if(!Directory.Exists(pluginDir))
+                    Directory.CreateDirectory(pluginDir);
+                pluginDir = System.IO.Path.Combine(workingDir, "App_Plugins");
+                if (!Directory.Exists(pluginDir))
+                    Directory.CreateDirectory(pluginDir);
+            }
+
+            container.Resolve<IContentServer>().Init(workingDir);
             return container.Resolve<IServiceProvider>();
         }
 

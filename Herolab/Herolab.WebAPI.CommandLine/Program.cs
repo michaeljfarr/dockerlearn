@@ -3,6 +3,7 @@ using Herolab.WebAPI.Config;
 using Castle.Windsor;
 using NUnit.Framework;
 using Castle.MicroKernel.Registration;
+using Herolab.Umbraco;
 
 
 namespace Herolab.WebAPI.CommandLine
@@ -11,6 +12,14 @@ namespace Herolab.WebAPI.CommandLine
     {
         public void Main(string[] args)
         {
+            ContentServer contentServer = new ContentServer();
+            var workignDir = Environment.GetEnvironmentVariable("HerolabWorkingDirectory");
+            contentServer.Init(workignDir);
+            Console.WriteLine("Found content: {0}!", contentServer.GetObject());
+        }
+
+        public void Test()
+        { 
             var container = new WindsorContainer();
             container.Register(Component.For<TestWindsorServiceScope.Root1>().ImplementedBy<TestWindsorServiceScope.Root1>().LifestyleScoped<PerAsp5RequestThreadScopeAccessor>());
             container.Register(Component.For<TestWindsorServiceScope.Root2>().ImplementedBy<TestWindsorServiceScope.Root2>().LifestyleScoped<PerAsp5RequestThreadScopeAccessor>());

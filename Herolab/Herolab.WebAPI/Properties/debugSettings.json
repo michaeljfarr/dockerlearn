@@ -1,0 +1,11 @@
+{
+  "profiles": [
+    {
+      "name": "IIS Express",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "HerolabWorkingDirectory": "Z:\\Projects\\dockerlearn\\var\\herolabworkingdir"
+      }
+    }
+  ]
+}
