@@ -41,10 +41,10 @@ namespace Herolab.Umbraco
             {
                 throw new ApplicationException(string.Format("Root path {0} doesn't exist.", rootPath));
             }
-            var pluginDir = System.IO.Path.Combine(rootPath, "/App_Data/TEMP/PluginCache");
+            var pluginDir = System.IO.Path.Combine(rootPath, "App_Data/TEMP/PluginCache");
             if (!System.IO.Directory.Exists(pluginDir))
             {
-                throw new ApplicationException(string.Format("Plugin path {0} doesn't exist.",pluginDir));
+                throw new ApplicationException(string.Format("Plugin path {0} doesn't exist. Root was {1}", pluginDir, rootPath));
             }
             //var cacheHelper = CacheHelper.CreateDisabledCacheHelper().(
             //new ObjectCacheRuntimeCacheProvider(),

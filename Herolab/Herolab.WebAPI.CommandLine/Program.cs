@@ -4,7 +4,11 @@ using Castle.Windsor;
 using NUnit.Framework;
 using Castle.MicroKernel.Registration;
 using Herolab.Umbraco;
-
+using System.Data;
+using System.Configuration;
+using System.Data.Common;
+using System.IO;
+using System.Reflection;
 
 namespace Herolab.WebAPI.CommandLine
 {
@@ -12,10 +16,47 @@ namespace Herolab.WebAPI.CommandLine
     {
         public void Main(string[] args)
         {
+            var mysqlFactoryTypeName = typeof(MySql.Data.MySqlClient.MySqlClientFactory).AssemblyQualifiedName;
+            RegisterDbProvider("MySql.Data.MySqlClient", ".Net Framework Data Provider for MySQL",
+                "MySQL Data Provider",
+                mysqlFactoryTypeName);//"MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, PublicKeyToken=c5687fc88969c44d");  
+            var factory = DbProviderFactories.GetFactory("MySql.Data.MySqlClient");
+
+            var workingDir = Environment.GetEnvironmentVariable("HerolabWorkingDirectory");
+            if (String.IsNullOrWhiteSpace(workingDir))
+            {
+                throw new ApplicationException("workingDir is null");
+            }
+            if (workingDir != null && Directory.Exists(workingDir))
+            {
+                System.Console.WriteLine("workingDir=" + workingDir);
+                var pluginDir = System.IO.Path.Combine(workingDir, "App_Data/TEMP/PluginCache");
+                if (!Directory.Exists(pluginDir))
+                    Directory.CreateDirectory(pluginDir);
+                System.Console.WriteLine("PluginCacheDir=" + pluginDir);
+                pluginDir = System.IO.Path.Combine(workingDir, "App_Plugins");
+                if (!Directory.Exists(pluginDir))
+                    Directory.CreateDirectory(pluginDir);
+                System.Console.WriteLine("pluginDir=" + pluginDir);
+            }
+
+
             ContentServer contentServer = new ContentServer();
-            var workignDir = Environment.GetEnvironmentVariable("HerolabWorkingDirectory");
-            contentServer.Init(workignDir);
+            contentServer.Init(workingDir);
             Console.WriteLine("Found content: {0}!", contentServer.GetObject());
+        }
+
+
+        public bool RegisterDbProvider(string invariant, string description, string name, string type)
+        {
+            DataSet ds = System.Configuration.ConfigurationManager.GetSection("system.data") as DataSet;
+            ds.Tables[0].Rows.Add(name, description, invariant, type);
+            //mono implementation
+            var providerTableField = typeof (DbProviderFactories).GetField("configEntries",
+                BindingFlags.Static | BindingFlags.NonPublic);
+            providerTableField?.SetValue(null, ds);
+
+            return true;
         }
 
         public void Test()

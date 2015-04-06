@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Data;
+using System.Data.Common;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
@@ -13,6 +17,7 @@ using Castle.Windsor;
 using Herolab.WebAPI.Config.Autofac;
 using Autofac;
 using Herolab.Umbraco;
+using Microsoft.IdentityModel.Protocols;
 using Umbraco.Core.Services;
 
 namespace Herolab.WebAPI
@@ -23,14 +28,19 @@ namespace Herolab.WebAPI
 
         public Startup(IHostingEnvironment env)
         {
-            
+
         }
 
         // This method gets called by a runtime.
         // Use this method to add services to the container
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            
+            var mysqlFactoryTypeName = typeof(MySql.Data.MySqlClient.MySqlClientFactory).AssemblyQualifiedName;
+            RegisterDbProvider("MySql.Data.MySqlClient", ".Net Framework Data Provider for MySQL",
+                "MySQL Data Provider",
+                mysqlFactoryTypeName);//"MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, PublicKeyToken=c5687fc88969c44d");  
+            var factory = DbProviderFactories.GetFactory("MySql.Data.MySqlClient");
+
             services.AddMvc();
             services.AddDataProtection();
 
@@ -87,18 +97,46 @@ namespace Herolab.WebAPI
             containerBuilder.Populate(services);
             var container = containerBuilder.Build();
             var workingDir = Environment.GetEnvironmentVariable("HerolabWorkingDirectory");
+            if(String.IsNullOrWhiteSpace(workingDir))
+            {
+                throw new ApplicationException("workingDir is null");
+            }
             if (workingDir != null && Directory.Exists(workingDir))
             {
+                System.Console.WriteLine("workingDir="  + workingDir);
                 var pluginDir = System.IO.Path.Combine(workingDir, "App_Data/TEMP/PluginCache");
                 if(!Directory.Exists(pluginDir))
                     Directory.CreateDirectory(pluginDir);
+                System.Console.WriteLine("PluginCacheDir="  + pluginDir);
                 pluginDir = System.IO.Path.Combine(workingDir, "App_Plugins");
                 if (!Directory.Exists(pluginDir))
                     Directory.CreateDirectory(pluginDir);
+                System.Console.WriteLine("pluginDir="  + pluginDir);
+                pluginDir = System.IO.Path.Combine(workingDir, "App_Plugins");
+                if (!Directory.Exists("~/App_Plugins"))
+                    Directory.CreateDirectory("~/App_Plugins");
+                System.Console.WriteLine("pluginDir=" + Path.GetFullPath("~/App_Plugins"));
+
+                
+            }
+            //.Instance
+            container.Resolve<IContentServer>().Init(workingDir);
+            container.Resolve<IContentServer>().GetObject();
+            return container.Resolve<IServiceProvider>();
+        }
+
+        public bool RegisterDbProvider(string invariant, string description, string name, string type)
+        {
+            DataSet ds = System.Configuration.ConfigurationManager.GetSection("system.data") as DataSet;
+            if (!ds.Tables[0].Rows.Cast<DataRow>().Select(a => a[0]).Any(a => (String)a == name))
+            {
+                ds.Tables[0].Rows.Add(name, description, invariant, type);            //mono implementation
+                var providerTableField = typeof(DbProviderFactories).GetField("configEntries",
+                    BindingFlags.Static | BindingFlags.NonPublic);
+                providerTableField?.SetValue(null, ds);
             }
 
-            container.Resolve<IContentServer>().Init(workingDir);
-            return container.Resolve<IServiceProvider>();
+            return true;
         }
 
         // Configure is called after ConfigureServices is called.

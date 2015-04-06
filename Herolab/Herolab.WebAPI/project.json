@@ -9,10 +9,15 @@
         "Microsoft.AspNet.Security.OAuthBearer": "1.0.0.0-*",
         "Castle.Windsor": "3.3.0",
         "Herolab.WebAPI.Config": "1.0.0-*",
-        "Herolab.NowinHost": "1.0.0-*"
+        "Herolab.NowinHost": "1.0.0-*",
+        "MySql.Data": "6.9.6"
     },
     "frameworks": {
-        "aspnet50": { }
+        "aspnet50": {
+            "frameworkAssemblies": {
+                "System.Configuration": "4.0.0.0"
+            }
+        }
     },
     "commands": {
         "web": "Microsoft.AspNet.Hosting --server Herolab.NowinHost",

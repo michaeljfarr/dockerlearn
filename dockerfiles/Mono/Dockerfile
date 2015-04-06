@@ -9,10 +9,11 @@ RUN apt-get -qq update && apt-get -qqy install unzip
 RUN curl -s https://raw.githubusercontent.com/aspnet/Home/master/kvminstall.sh | sh
 RUN bash -c "source /root/.k/kvm/kvm.sh \
       && kvm upgrade "
+RUN echo 192.168.178.48 mysql.local >> /etc/hosts
 # "ENV" sets an environment variable which will be set
 # whenever the container is started
 ENV PATH $PATH:/root/.k/runtimes/kre-mono.1.0.0-beta3/bin/
-
+ENV HerolabWorkingDirectory /app/dockerlearn/var
 VOLUME ["/app"]
 WORKDIR /app
 

@@ -13,4 +13,4 @@ if [ ! -f /var/lib/mysql/ibdata1 ]; then
     sleep 10s
 fi
 
-/usr/bin/mysqld_safe 
+/usr/bin/mysqld_safe  --lower_case_table_names=1 

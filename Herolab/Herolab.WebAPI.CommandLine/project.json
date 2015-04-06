@@ -8,6 +8,10 @@
         "Herolab.WebAPI.CommandLine": "run"
     },
     "frameworks": {
-        "aspnet50": { }
+        "aspnet50": {
+            "frameworkAssemblies": {
+                "System.Configuration": "4.0.0.0"
+            }
+        }
     }
 }
