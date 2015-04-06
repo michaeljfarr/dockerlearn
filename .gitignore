@@ -1,0 +1,10 @@
+*/*/bin/*
+*/*/obj/*
+
+*/*/~/*
+*/.vs/*
+*/artifacts
+var/*
+*/*/*.user
+**.DS_Store
+*/*/App_Data
