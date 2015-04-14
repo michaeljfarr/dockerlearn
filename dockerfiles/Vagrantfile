@@ -1,0 +1,87 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+#require 'getoptlong'
+#opts = GetoptLong.new( 
+#  [ '--ip', '-i', GetoptLong::OPTIONAL_ARGUMENT ],
+#  [ '--mysql-port', '-m', GetoptLong::OPTIONAL_ARGUMENT ],
+#  [ '--web-port', '-w', GetoptLong::OPTIONAL_ARGUMENT ])
+
+mysqlPort = '3306'
+webPort = '5000'
+ipAddress = '0.0.0.0'
+
+#opts.each do |opt, arg|
+#  case opt
+#    when '--web-port'
+#      webPort = arg.to_i
+#    when '--mysql-port'
+#      mysqlPort = arg.to_i
+#    when '--ip'
+#      ipAddress = arg
+#  end
+#end
+
+Vagrant.configure("2") do |config|
+    config.vm.network :forwarded_port, guest: mysqlPort, host: mysqlPort, auto_correct: true
+    config.vm.network :forwarded_port, guest: webPort, host: webPort, auto_correct: true
+    config.vm.synced_folder "/Users/mike/Projects/", "/app"
+    #this says we are doing this stuff in virtualbox    
+    config.vm.provider "virtualbox" do |vm|
+      vm.memory = 1024
+    end
+
+    #within that virtualbox server, use the Official Ubuntu Server 14.04 LTS
+    config.vm.box = "ubuntu/trusty64"
+    config.vm.define "vmhost" do |vmhost|
+
+      #this installs docker onto the box
+      vmhost.vm.provision "docker" do |docker|
+
+      end
+
+      #now create a persistent docker container to hold the database, using the mariadb image we pulled above
+      $script = <<SCRIPT
+if [ -n  "$(docker ps -a | grep umbracodbdata)" ] 
+  then  
+  docker rm $(docker ps -a | grep umbracodbdata | awk '{print $1}')
+fi
+#create a persistent store for the /var/lib/mysql directory in the unioning file system
+docker create -v /var/lib/mysql --name umbracodbdata mariadb
+#create 
+docker build -t="mariadb/herolab" /app/dockerlearn/dockerfiles/MariaDB/
+docker run -d -p #{mysqlPort}:3306 --volumes-from umbracodbdata mariadb/herolab /bin/bash -c "rm -rf /var/lib/mysql/*"
+SCRIPT
+      vmhost.vm.provision "shell", inline: $script
+
+      #now create a docker aspnet image 
+      $script = <<SCRIPT
+docker build -t=aspnet/herolab /app/dockerlearn/dockerfiles/Mono
+docker run -v /app:/app -w /app/dockerlearn/dockerfiles/Mono -p #{webPort}:5000 aspnet/herolab /bin/bash init_mono_container.sh
+docker commit -m "Restored kpm" $(docker ps -l | sed -n 2p | awk '{print $1}') webapi/herolab
+SCRIPT
+      vmhost.vm.provision "shell", inline: $script
+
+      print "if starting: docker run -d -p #{mysqlPort}:3306 -v /app:/app --volumes-from=umbracodbdata --name=mariadb_herolab mariadb/herolab /bin/bash /app/dockerlearn/dockerfiles/MariaDB/init_mariadb_container.sh\n"
+      vmhost.vm.provider "docker" do |d|
+          d.image = ["mariadb/herolab"]
+          d.name = ["mariadb_herolab"]
+          d.remains_running = true
+          d.ports = ["#{mysqlPort}:3306"]
+          d.create_args = ["--volumes-from=umbracodbdata"]
+          d.cmd = ["/bin/bash", "/app/dockerlearn/dockerfiles/MariaDB/init_mariadb_container.sh"]
+      end
+
+      #$myIP  =  `docker inspect --format '{{ .NetworkSettings.IPAddress }}' $(docker ps | grep mariadb/herolab | awk '{print $1}')"`
+      print "if starting: docker run -d -p #{webPort}:5000 -v /app:/app -w /app/dockerlearn/Herolab/Herolab.WebAPI --link mariadb_herolab:mysql.local webapi/herolab k web\n"
+      vmhost.vm.provider "docker" do |d|
+          d.image = "webapi/herolab"
+          d.name = "webapi_herolab"
+          d.ports = ["#{webPort}:5000"]
+          d.create_args = ["-t", "-v", "/app:/app", "-w", "/app/dockerlearn/Herolab/Herolab.WebAPI", "--link mariadb_herolab:mysql.local", "k", "web"]
+          d.remains_running = false
+      end
+
+
+    end
+end
+

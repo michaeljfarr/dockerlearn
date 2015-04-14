@@ -14,6 +14,7 @@ RUN echo 192.168.178.48 mysql.local >> /etc/hosts
 # whenever the container is started
 ENV PATH $PATH:/root/.k/runtimes/kre-mono.1.0.0-beta3/bin/
 ENV HerolabWorkingDirectory /app/dockerlearn/var
+EXPOSE 5000
 VOLUME ["/app"]
 WORKDIR /app
 

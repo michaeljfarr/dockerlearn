@@ -1,0 +1,4 @@
+name: aspnet_herolab aspnet/herolab
+ports: 5000:5000
+links: mariadb_herolab:mysql.local 
+working_dir: /app/dockerlearn/Herolab/Herolab.WebAPI
