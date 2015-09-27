@@ -1,0 +1,47 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+    config.vm.network :forwarded_port, guest: 5005, host: 5006
+    
+    config.vm.provision "shell", 
+        inline:  "docker create -v /var/lib/mysql --name umbracodbdata dockerfile/mariadb"
+    
+    config.vm.provision "docker"
+        config.vm.provider "docker" do |d|
+            d.name = "mariadb/herolab"
+            d.build_dir = "./MariaDB"
+            d.create_args = ["--volumes-from=umbracodbdata"]
+            d.remains_running = false
+            d.cmd = ["/bin/bash", "/opt/reset_mariadb_container.sh"]
+        end
+
+    config.vm.define "db" do |db|
+        db.vm.provider "docker" do |d|
+            d.name = ["mariadb/herolab"]
+            d.remains_running = true
+            d.ports = ["3306:3306"]
+            d.create_args = ["--volumes-from=umbracodbdata"]
+            d.cmd = ["/usr/bin/mysqld_safe", "--lower_case_table_names=1"]
+        end
+    end
+    config.vm.provision "docker"
+        config.vm.provider "docker" do |d|
+            d.build_dir = "Mono"
+            d.name = "aspnet/herolab"
+            d.remains_running = false
+            d.create_args = ["-v", "/Users/mike/Projects:/app", "-w", "/app/dockerlearn/Herolab"]
+            d.cmd = ["/bin/bash"," init_mono_container.sh"]
+        end
+    
+    config.vm.define "app" do |app|
+        app.vm.provider "docker" do |d|
+            d.image = ["aspnet/herolab"]
+            d.name = "aspnet/herolab"
+            d.ports = ["8080:5002"]
+            d.create_args = ["-v", "/Users/mike/Projects:/app", "-w", "/app/dockerlearn/Herolab"]
+            d.cmd = ["kpm", "restore"]
+        end
+    end
+end
+

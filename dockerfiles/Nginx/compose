@@ -1,0 +1,13 @@
+# what should the container and image be called
+# <container name>  <image name> 
+name: nginx_herolab nginx/herolab
+
+# what ports should be exposed
+ports: 81:81
+
+# what hostnames to ceate in the container
+# the <container name> <domain name>
+links: aspnet_herolab:mysql.local 
+
+#working directory in the container
+working_dir: /app/dockerlearn/Herolab/Herolab.WebAPI

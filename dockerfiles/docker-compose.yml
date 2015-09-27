@@ -1,0 +1,12 @@
+web:
+  build: Mono
+  links:
+   - db
+  ports:
+   - "5000:5000"
+db:
+  build: MariaDB
+  ports:
+   - "3306"
+  volumes_from:
+   - umbracodbdata 

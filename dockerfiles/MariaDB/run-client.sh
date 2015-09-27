@@ -6,4 +6,4 @@ TAG="dockerfile/mariadb"
 
 IP=$(ipconfig getifaddr en0)
 
-docker run -t -i dockerfile/mariadb mysql -u umbraco -p -h $IP
+docker run -t -i mariadb mysql -u umbraco -p -h $IP
